@@ -268,6 +268,7 @@ void CPsycologyTestDlg::OnBnClickedPrev()
 
 void CPsycologyTestDlg::OnBnClickedNext()
 {
+	ASSERT(_psi_scale);
 	if (_current_question_index < _psi_scale->GetQuestionCount() - 1)
 	{
 		ShowQuestion(_current_question_index + 1);

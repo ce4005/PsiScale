@@ -75,6 +75,7 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 	}
 
 	bool same_choices = xml.GetBoolAttrib(XML_SAME_CHOICES);
+	scale->SetSameChoice(same_choices);
 	if (same_choices)
 	{
 		auto choices_element = xml.GetElement(XML_CHOICES);
@@ -114,48 +115,50 @@ bool CTestManager::SavePsiScale(const CString& file_path, PsiScale& scale)
 	xml.SetIntegerAttrib(XML_ID, scale.GetId());
 	xml.SetAttrib(XML_NAME, scale.GetName());
 	xml.SetAttrib(XML_DESCRIPTION, scale.GetDescription());
-	
-	auto Prologue = xml.AddElement(XML_PROLOGUE);
-	Prologue->SetAttrib(XML_TEXT, scale.GetPrologue());
-	if (scale.IsSameChoice() == true) {
-		auto Choices = xml.AddElement(XML_CHOICES);
-		for (auto iter : scale.Choices())
+	xml.SetBoolAttrib(XML_SAME_CHOICES, scale.IsSameChoice());
+	if (scale.IsSameChoice())
+	{
+		auto choices = xml.AddElement(XML_CHOICES);
+		for (auto choice : scale.Choices())
 		{
-			auto Item = Choices->AddElement(_T("Item"));
-			Item->SetIntegerAttrib(XML_ID, iter.id);
-			Item->SetAttrib(XML_TEXT, iter.text);
+			auto choice_element = choices->AddElement(_T("Item"));
+			choice_element->SetIntegerAttrib(XML_ID, choice.id);
+			choice_element->SetAttrib(XML_TEXT, choice.text);
 		}
 	}
 
-	auto Groups = xml.AddElement(XML_GROUPS);
-	for (int i = 0; i < scale.GetGroupCount(); ++i)
+	auto prologue = xml.AddElement(XML_PROLOGUE);
+	prologue->SetAttrib(XML_TEXT, scale.GetPrologue());
+
+	auto groups = xml.AddElement(XML_GROUPS);
+	for (unsigned int i = 0; i < scale.GetGroupCount(); ++i)
 	{
-		auto Item = Groups->AddElement(_T("Item"));
-		Item->SetIntegerAttrib(XML_ID, scale.Group(i).id);
-		Item->SetAttrib(XML_DESCRIPTION, scale.Group(i).description);
+		auto group_element = groups->AddElement(_T("Item"));
+		group_element->SetIntegerAttrib(XML_ID, scale.Groups()[i].id);
+		group_element->SetAttrib(XML_DESCRIPTION, scale.Groups()[i].description);
 	}
 	auto Question = xml.AddElement(XML_QUESTIONS);
-	for (int i = 0; i < scale.GetQuestionCount(); ++i)
+	for (unsigned int i = 0; i < scale.GetQuestionCount(); ++i)
 	{
-		auto Item = Question->AddElement(_T("Item"));
-		Item->SetIntegerAttrib(XML_ID, i );
-		Item->SetAttrib(XML_TEXT, scale.GetQuestion(i).GetText());
-		Item->SetBoolAttrib(XML_REVERSE_SCORE, scale.GetQuestion(i).GetReverseScore());
-		Item->SetIntegerAttrib(XML_GROUP_ID, scale.GetQuestion(i).GetGroupId());
+		auto question_element = Question->AddElement(_T("Item"));
+		question_element->SetIntegerAttrib(XML_ID, i );
+		question_element->SetAttrib(XML_TEXT, scale.GetQuestion(i).GetText());
+		question_element->SetBoolAttrib(XML_REVERSE_SCORE, scale.GetQuestion(i).GetReverseScore());
+		question_element->SetIntegerAttrib(XML_GROUP_ID, scale.GetQuestion(i).GetGroupId());
 		if (scale.IsSameChoice() == false)
 		{
-			auto Choices = Item->AddElement(XML_CHOICES);
+			auto choices = question_element->AddElement(XML_CHOICES);
 			for (auto iter : scale.Choices())
 			{
-				auto Itemss = Choices->AddElement(_T("Item"));
-				Itemss->SetIntegerAttrib(XML_ID, iter.id);
-				Itemss->SetAttrib(XML_TEXT, iter.text);
+				auto choice_element = choices->AddElement(_T("Item"));
+				choice_element->SetIntegerAttrib(XML_ID, iter.id);
+				choice_element->SetAttrib(XML_TEXT, iter.text);
 			}
 		}
 
 	}
 	xml.Save(file_path);
-	return false;
+	return true;
 }
 
 PsiScale & CTestManager::GetPsiScale(unsigned id)
@@ -246,19 +249,27 @@ const PsiScaleGroup& PsiScale::GetGroup(unsigned index) const
 	return _groups[index];
 }
 
-PsiScaleGroup& PsiScale::Group(unsigned int index)
-{
-	return _groups[index];
-}
-
 unsigned int PsiScale::GetGroupCount() const
 {
 	return _groups.size();
 }
 
+std::vector<PsiScaleGroup>& PsiScale::Groups()
+{
+	return _groups;
+}
+
 void PsiScale::AddQuestion(const PsiScaleQuestion& question)
 {
 	_questions.push_back(question);
+}
+
+void PsiScale::DeleteQuestion(unsigned int index)
+{
+	if (index < _questions.size())
+	{
+		_questions.erase(_questions.begin() + index);
+	}
 }
 
 unsigned int PsiScale::GetQuestionCount() const
@@ -273,7 +284,7 @@ bool PsiScale::Save(const CString& file_path)
 
 std::vector<QuestionChoice>& PsiScale::Choices()
 {
-	return _shared_choices;
+	return _choices;
 }
 
 const bool PsiScale::IsSameChoice() const

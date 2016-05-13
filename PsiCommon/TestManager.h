@@ -60,10 +60,11 @@ public:
 
 	void AddGroup(const PsiScaleGroup& group);
 	const PsiScaleGroup& GetGroup(unsigned index) const;
-	PsiScaleGroup& Group(unsigned int index);
 	unsigned int GetGroupCount() const;
+	std::vector<PsiScaleGroup>& Groups();
 
 	void AddQuestion(const PsiScaleQuestion& question);
+	void DeleteQuestion(unsigned int index);
 	const PsiScaleQuestion& GetQuestion(unsigned int index) const;
 	PsiScaleQuestion& Question(unsigned index);
 	unsigned int GetQuestionCount() const;
@@ -77,12 +78,12 @@ private:
 	CString _name;
 	CString _description;
 	CString _prologue;
-	bool _same_choice;
 
 	std::vector<PsiScaleGroup> _groups;
 	std::vector<PsiScaleQuestion> _questions;
-	std::vector<QuestionChoice> _shared_choices;
+	std::vector<QuestionChoice> _choices;
 
+	bool _same_choice;
 };
 
 struct Score

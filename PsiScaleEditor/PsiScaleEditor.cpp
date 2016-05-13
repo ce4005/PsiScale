@@ -53,7 +53,7 @@ BOOL CPsiScaleEditorApp::InitInstance()
 	// 最终可执行文件的大小，则应移除下列
 	// 不需要的特定初始化例程
 	// 更改用于存储设置的注册表项
-	// SetRegistryKey(_T("SKMR"));
+	SetRegistryKey(_T("SKMR"));
 
 	CPsiScaleEditorDlg dlg;
 

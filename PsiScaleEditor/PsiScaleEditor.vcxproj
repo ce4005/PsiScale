@@ -182,17 +182,25 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChoiceList.h" />
+    <ClInclude Include="GroupList.h" />
     <ClInclude Include="InputStringDialog.h" />
     <ClInclude Include="PsiScaleEditor.h" />
     <ClInclude Include="PsiScaleEditorDlg.h" />
+    <ClInclude Include="QuestionEditorDlg.h" />
+    <ClInclude Include="QuestionListBox.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ChoiceList.cpp" />
+    <ClCompile Include="GroupList.cpp" />
     <ClCompile Include="InputStringDialog.cpp" />
     <ClCompile Include="PsiScaleEditor.cpp" />
     <ClCompile Include="PsiScaleEditorDlg.cpp" />
+    <ClCompile Include="QuestionEditorDlg.cpp" />
+    <ClCompile Include="QuestionListBox.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
