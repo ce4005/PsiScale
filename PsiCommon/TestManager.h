@@ -12,17 +12,11 @@ struct QuestionChoice
 	CString text;
 };
 
-struct PsiScaleGroup
-{
-	unsigned int id;
-	CString description;
-};
-
 class PsiScaleQuestion
 {
 public:
 	PsiScaleQuestion();
-	PsiScaleQuestion(unsigned id, const CString& text, bool reverse_score, unsigned short group_id);
+	PsiScaleQuestion(unsigned id, const CString& text, bool reverse_score, const CString& group);
 
 	void SetId(unsigned id);
 	unsigned GetId() const;
@@ -30,17 +24,16 @@ public:
 	const CString& GetText() const;
 	void SetReverseScore(bool reverse_score);
 	const bool GetReverseScore() const;
-	void SetGroup(unsigned short group_id);
-	const unsigned short GetGroupId() const;
+	void SetGroup(const CString& group);
+	const CString& GetGroup() const;
 
 	std::vector<QuestionChoice>& Choices();
 private:
 	unsigned _id;
-	std::vector<QuestionChoice> _choices;
 	CString _text;
-	unsigned short _level_count;
 	bool _reverse_score;
-	unsigned short _group_id;
+	CString _group;
+	std::vector<QuestionChoice> _choices;
 };
 
 class PsiScale
@@ -58,10 +51,10 @@ public:
 	void SetPrologue(const TCHAR* prologue);
 	const CString& GetPrologue() const;
 
-	void AddGroup(const PsiScaleGroup& group);
-	const PsiScaleGroup& GetGroup(unsigned index) const;
+	void AddGroup(const CString& group);
+	const CString& GetGroup(unsigned index) const;
 	unsigned int GetGroupCount() const;
-	std::vector<PsiScaleGroup>& Groups();
+	std::vector<CString>& Groups();
 
 	void AddQuestion(const PsiScaleQuestion& question);
 	void DeleteQuestion(unsigned int index);
@@ -79,7 +72,7 @@ private:
 	CString _description;
 	CString _prologue;
 
-	std::vector<PsiScaleGroup> _groups;
+	std::vector<CString> _groups;
 	std::vector<PsiScaleQuestion> _questions;
 	std::vector<QuestionChoice> _choices;
 

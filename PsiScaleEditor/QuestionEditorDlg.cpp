@@ -21,6 +21,7 @@ CQuestionEditorDlg::CQuestionEditorDlg(shared_ptr<PsiScale> scale, CWnd* pParent
 	, _scale(scale)
 	, _reverse_score(FALSE)
 	, _current_question(-1)
+	, _question_number(_T(""))
 {
 	ASSERT(_scale);
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -40,17 +41,19 @@ void CQuestionEditorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDOK, _return_button);
 	DDX_Control(pDX, IDC_STATIC_CHOICE_LIST_LABEL, _choice_list_label);
 	DDX_Control(pDX, IDC_GROUP_LABEL, _group_label);
+	DDX_Text(pDX, IDC_STATIC_QUESTION_NUMBER, _question_number);
 }
 
 BEGIN_MESSAGE_MAP(CQuestionEditorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_ADD, &CQuestionEditorDlg::OnBnClickedAddQuestion)
+	ON_BN_CLICKED(IDC_BUTTON_NEW, &CQuestionEditorDlg::OnBnClickedButtonNew)
 	ON_EN_CHANGE(IDC_EDIT_QUESTION, &CQuestionEditorDlg::OnEnChangeEditQuestion)
 	ON_BN_CLICKED(IDC_BUTTON_NEXT, &CQuestionEditorDlg::OnBnClickedButtonNext)
 	ON_BN_CLICKED(IDC_BUTTON_PREV, &CQuestionEditorDlg::OnBnClickedButtonPrev)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CQuestionEditorDlg::OnBnClickedDeleteQuestion)
+	ON_BN_CLICKED(IDOK, &CQuestionEditorDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -95,7 +98,7 @@ BOOL CQuestionEditorDlg::OnInitDialog()
 	{
 		for (auto group : _scale->Groups())
 		{
-			_group_combo.AddString(group.description);
+			_group_combo.AddString(group);
 		}
 	}
 	else
@@ -106,7 +109,7 @@ BOOL CQuestionEditorDlg::OnInitDialog()
 
 	if (_scale->GetQuestionCount() == 0)
 	{
-		OnBnClickedAddQuestion();
+		OnBnClickedButtonNew();
 	}
 	else
 	{
@@ -202,14 +205,14 @@ HCURSOR CQuestionEditorDlg::OnQueryDragIcon()
 }
 
 
-void CQuestionEditorDlg::OnBnClickedAddQuestion()
+void CQuestionEditorDlg::OnBnClickedButtonNew()
 {
 	PsiScaleQuestion new_question;
 
 	_scale->AddQuestion(new_question);
 	_current_question = _scale->GetQuestionCount() - 1;
+
 	UpdateUi();
-	UpdateData(FALSE);
 }
 
 void CQuestionEditorDlg::UpdateUi()
@@ -217,13 +220,13 @@ void CQuestionEditorDlg::UpdateUi()
 	if (!_scale)
 		return;
 
-	ASSERT(_current_question < _scale->GetQuestionCount());
+	ASSERT(_current_question < int(_scale->GetQuestionCount()));
 
 	auto question = _scale->GetQuestion(_current_question);
 
 	_question_text = question.GetText();
 	_reverse_score = question.GetReverseScore();
-	_group_combo.SetCurSel(question.GetGroupId() - 1);
+	_group_combo.SelectString(0, question.GetGroup());
 
 	if (!_scale->IsSameChoice())
 	{
@@ -233,7 +236,11 @@ void CQuestionEditorDlg::UpdateUi()
 			_choice_list.AddItem(choice.text, choice.id);
 		}
 	}
+	_next_button.EnableWindow(_current_question < _scale->GetQuestionCount() - 1);
+	_prev_button.EnableWindow(_current_question > 0);
 
+	_question_number.Format(_T("%d / %d"), _current_question + 1, _scale->GetQuestionCount());
+	GetDlgItem(IDC_STATIC_QUESTION_NUMBER)->SetWindowText(_question_number);
 	UpdateData(FALSE);
 }
 
@@ -258,7 +265,7 @@ void CQuestionEditorDlg::OnBnClickedButtonNext()
 {
 	UpdateQuestion(); // 保存当前的问题
 
-	if (_current_question < _scale->GetQuestionCount() - 1)
+	if (_current_question < int(_scale->GetQuestionCount()) - 1)
 	{
 		++_current_question;
 	}
@@ -283,7 +290,7 @@ void CQuestionEditorDlg::OnBnClickedDeleteQuestion()
 	if (AfxMessageBox(_T("是否确定要删除当前的问题？"), MB_OK | MB_OKCANCEL) == IDOK)
 	{
 		_scale->DeleteQuestion(_current_question);
-		if (_current_question >= _scale->GetQuestionCount())
+		if (_current_question >= int(_scale->GetQuestionCount()))
 		{
 			_current_question = _scale->GetQuestionCount() - 1;
 		}
@@ -299,18 +306,16 @@ void CQuestionEditorDlg::UpdateQuestion()
 
 	UpdateData();
 
-	ASSERT(_current_question < _scale->GetQuestionCount());
+	ASSERT(_current_question < int(_scale->GetQuestionCount()));
 	auto& question = _scale->Question(_current_question);
 
 	question.SetText(_question_text);
 	question.SetReverseScore(_reverse_score != FALSE);
-	if (_group_combo.GetCurSel() == LB_ERR)
+	if (_group_combo.GetCurSel() != LB_ERR)
 	{
-		question.SetGroup(1);
-	}
-	else
-	{
-		question.SetGroup(_group_combo.GetCurSel() + 1);
+		CString group;
+		_group_combo.GetLBText(_group_combo.GetCurSel(), group);
+		question.SetGroup(group);
 	}
 
 	if (!_scale->IsSameChoice())
@@ -319,10 +324,17 @@ void CQuestionEditorDlg::UpdateQuestion()
 		auto& choices = question.Choices();
 		choices.resize(_choice_list.GetCount());
 
-		for (unsigned int i = 0; i < _choice_list.GetCount(); ++i)
+		for (int i = 0; i < _choice_list.GetCount(); ++i)
 		{
 			choices[i].id = i + 1;
 			choices[i].text = _choice_list.GetItemText(i);
 		}
 	}
+}
+
+
+void CQuestionEditorDlg::OnBnClickedOk()
+{
+	UpdateQuestion();
+	CDialogEx::OnOK();
 }

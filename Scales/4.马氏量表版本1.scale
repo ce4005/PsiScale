@@ -1,0 +1,42 @@
+<PsycologyTest Id="4" Name="马氏量表版本1" SameChoices="1">
+<Choices>
+<Item Id="1">完全不同意</Item>
+<Item Id="2">不同意</Item>
+<Item Id="3">有点不同意</Item>
+<Item Id="4">不确定</Item>
+<Item Id="5">有点同意</Item>
+<Item Id="6">同意</Item>
+<Item Id="7">完全同意</Item>
+</Choices>
+<Prologue>下面有一些陈述，每一陈述代表一种观点，答案没有正确与错误之分。你可能不同意其中的某些观点，
+但同意另一些观点。我们感兴趣的是你对这些观点同意或不同意的程度。仔细阅读每一陈述，然后表明
+你对每一陈述同意或不同意的程度。第一印象往往最为恰当。阅读每一陈述，决定自己同意还是不同意
+以及同意或不同意的程度，然后在该陈述之前标出相应的数值。对每一陈述均应发表你的见解。</Prologue>
+<Groups>
+<Item>Tactics</Item>
+<Item>Morality</Item>
+<Item>Views</Item>
+</Groups>
+<Questions>
+<Item Id="1" ReverseScore="0" SubScale="Tactics">决不要告诉任何人你做某事的真正原因，除非你另有目的。</Item>
+<Item Id="2" ReverseScore="1" SubScale="Views">与人相处的最好方法是说出他们想知道的事。</Item>
+<Item Id="3" ReverseScore="0" SubScale="Views">只有确信符合道德时才能采取行动。</Item>
+<Item Id="4" ReverseScore="1" SubScale="Tactics">多数人基本上是好的和善良的。</Item>
+<Item Id="5" ReverseScore="0" SubScale="Views">最安全的处世原则是假定所有人均有邪恶的一面，如有机会人们的邪恶就会暴露出来。</Item>
+<Item Id="6" ReverseScore="0" SubScale="Tactics">在任何情况下诚实均为上策。</Item>
+<Item Id="7" ReverseScore="0" SubScale="Views">没有任何理由对别人撒谎。</Item>
+<Item Id="8" ReverseScore="0" SubScale="Morality">一般来说，没有压力人们是不会努力工作的。</Item>
+<Item Id="9" ReverseScore="1" SubScale="Views">总而言之，地位卑微和诚实优于地位显赫和欺骗。</Item>
+<Item Id="10" ReverseScore="0" SubScale="Tactics">当你求别人帮忙时，最好告之以真正的理由而不是编造更有说服力的理由。</Item>
+<Item Id="11" ReverseScore="0" SubScale="Views">世界上成功的人大多过着清白和道德的生活。</Item>
+<Item Id="12" ReverseScore="1" SubScale="Tactics">完全信任别人等于自讨苦吃。</Item>
+<Item Id="13" ReverseScore="1" SubScale="Views">犯人与一般人的最大区别在于他们由于愚蠢而被抓住。</Item>
+<Item Id="14" ReverseScore="1" SubScale="Views">多数人是勇敢的。</Item>
+<Item Id="15" ReverseScore="1" SubScale="Tactics">奉承大人物是明智的作法。</Item>
+<Item Id="16" ReverseScore="1" SubScale="Tactics">在各方面都优秀是可能达到的。</Item>
+<Item Id="17" ReverseScore="0" SubScale="Views">“每分钟都有傻瓜降生”这种说法是不对的。</Item>
+<Item Id="18" ReverseScore="0" SubScale="Tactics">不走捷径就很难成功。</Item>
+<Item Id="19" ReverseScore="1" SubScale="Tactics">患不治之症的人应该有权利选择无痛苦的死亡。</Item>
+<Item Id="20" ReverseScore="1" SubScale="Morality">多数人能轻易忘记父亲的亡故，却不容易忘记财产的损失。</Item>
+</Questions>
+</PsycologyTest>

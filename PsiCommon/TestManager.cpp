@@ -16,7 +16,7 @@ const TCHAR * XML_QUESTIONS = _T("Questions");
 const TCHAR * XML_TEXT = _T("Text");
 const TCHAR * XML_LEVEL_COUNT = _T("LevelCount");
 const TCHAR * XML_REVERSE_SCORE = _T("ReverseScore");
-const TCHAR * XML_GROUP_ID = _T("GroupId");
+const TCHAR * XML_SUB_SCALE = _T("SubScale");
 const TCHAR * XML_CHOICES = _T("Choices");
 const TCHAR * XML_SAME_CHOICES = _T("SameChoices");
 const TCHAR * XML_PSYCOLOGYTEST = _T("PsycologyTest");
@@ -59,7 +59,7 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 	if (prologue_element == nullptr)
 		return shared_ptr<PsiScale>();
 
-	scale->SetPrologue(prologue_element->GetAttrib(XML_TEXT));
+	scale->SetPrologue(prologue_element->GetData());
 
 	auto groups_element = xml.GetElement(XML_GROUPS);
 	if (groups_element == nullptr)
@@ -68,10 +68,7 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 	auto& group_items = groups_element->GetChildElements();
 	for (auto item : group_items)
 	{
-		PsiScaleGroup group;
-		group.id = item->GetIntegerAttrib(XML_ID);
-		group.description = item->GetAttrib(XML_DESCRIPTION);
-		scale->AddGroup(group);
+		scale->AddGroup(item->GetData());
 	}
 
 	bool same_choices = xml.GetBoolAttrib(XML_SAME_CHOICES);
@@ -86,7 +83,7 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 		{
 			QuestionChoice choice;
 			choice.id = item->GetIntegerAttrib(XML_ID);
-			choice.text = item->GetAttrib(XML_TEXT);
+			choice.text = item->GetData();
 			scale->Choices().push_back(choice);
 		}
 	}
@@ -99,9 +96,9 @@ shared_ptr<PsiScale> CTestManager::LoadPsiScale(const CString& file_path)
 	for (auto item : question_items)
 	{
 		PsiScaleQuestion question(item->GetIntegerAttrib(XML_ID), 
-			item->GetAttrib(XML_TEXT), 
+			item->GetData(), 
 			item->GetBoolAttrib(XML_REVERSE_SCORE),
-			item->GetIntegerAttrib(XML_GROUP_ID));
+			item->GetAttrib(XML_SUB_SCALE));
 
 		scale->AddQuestion(question);
 	}
@@ -121,30 +118,26 @@ bool CTestManager::SavePsiScale(const CString& file_path, PsiScale& scale)
 		auto choices = xml.AddElement(XML_CHOICES);
 		for (auto choice : scale.Choices())
 		{
-			auto choice_element = choices->AddElement(_T("Item"));
+			auto choice_element = choices->AddElement(_T("Item"), choice.text);
 			choice_element->SetIntegerAttrib(XML_ID, choice.id);
-			choice_element->SetAttrib(XML_TEXT, choice.text);
 		}
 	}
 
-	auto prologue = xml.AddElement(XML_PROLOGUE);
-	prologue->SetAttrib(XML_TEXT, scale.GetPrologue());
+	auto prologue = xml.AddElement(XML_PROLOGUE, scale.GetPrologue());
 
 	auto groups = xml.AddElement(XML_GROUPS);
 	for (unsigned int i = 0; i < scale.GetGroupCount(); ++i)
 	{
 		auto group_element = groups->AddElement(_T("Item"));
-		group_element->SetIntegerAttrib(XML_ID, scale.Groups()[i].id);
-		group_element->SetAttrib(XML_DESCRIPTION, scale.Groups()[i].description);
+		group_element->SetData(scale.Groups()[i]);
 	}
 	auto Question = xml.AddElement(XML_QUESTIONS);
 	for (unsigned int i = 0; i < scale.GetQuestionCount(); ++i)
 	{
-		auto question_element = Question->AddElement(_T("Item"));
-		question_element->SetIntegerAttrib(XML_ID, i );
-		question_element->SetAttrib(XML_TEXT, scale.GetQuestion(i).GetText());
+		auto question_element = Question->AddElement(_T("Item"), scale.GetQuestion(i).GetText());
+		question_element->SetIntegerAttrib(XML_ID, i + 1);
 		question_element->SetBoolAttrib(XML_REVERSE_SCORE, scale.GetQuestion(i).GetReverseScore());
-		question_element->SetIntegerAttrib(XML_GROUP_ID, scale.GetQuestion(i).GetGroupId());
+		question_element->SetAttrib(XML_SUB_SCALE, scale.GetQuestion(i).GetGroup());
 		if (scale.IsSameChoice() == false)
 		{
 			auto choices = question_element->AddElement(XML_CHOICES);
@@ -238,12 +231,12 @@ const CString& PsiScale::GetPrologue() const
 	return _prologue;
 }
 
-void PsiScale::AddGroup(const PsiScaleGroup& group)
+void PsiScale::AddGroup(const CString& group)
 {
 	_groups.push_back(group);
 }
 
-const PsiScaleGroup& PsiScale::GetGroup(unsigned index) const
+const CString& PsiScale::GetGroup(unsigned index) const
 {
 	ASSERT(index < _groups.size());
 	return _groups[index];
@@ -254,7 +247,7 @@ unsigned int PsiScale::GetGroupCount() const
 	return _groups.size();
 }
 
-std::vector<PsiScaleGroup>& PsiScale::Groups()
+std::vector<CString>& PsiScale::Groups()
 {
 	return _groups;
 }
@@ -298,15 +291,15 @@ void PsiScale::SetSameChoice(bool samechoice)
 }
 
 PsiScaleQuestion::PsiScaleQuestion() :
-	_reverse_score(false), _group_id(0)
+	_reverse_score(false)
 {
 }
 
 PsiScaleQuestion::PsiScaleQuestion(unsigned id, 
 	const CString& text,
 	bool reverse_score, 
-	unsigned short group_id) :
-	_id(id), _text(text), _reverse_score(reverse_score), _group_id(group_id)
+	const CString& group) :
+	_id(id), _text(text), _reverse_score(reverse_score), _group(group)
 {
 }
 
@@ -340,14 +333,14 @@ const bool PsiScaleQuestion::GetReverseScore() const
 	return _reverse_score;
 }
 
-void PsiScaleQuestion::SetGroup(unsigned short group_id)
+void PsiScaleQuestion::SetGroup(const CString& group)
 {
-	_group_id = group_id;
+	_group = group;
 }
 
-const unsigned short PsiScaleQuestion::GetGroupId() const
+const CString& PsiScaleQuestion::GetGroup() const
 {
-	return _group_id;
+	return _group;
 }
 
 std::vector<QuestionChoice>& PsiScaleQuestion::Choices()

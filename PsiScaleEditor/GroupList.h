@@ -10,7 +10,7 @@ class CGroupList : public CVSListBox
 public:
 	CGroupList();
 	virtual ~CGroupList();
-
+	bool SelectString(const CString& text);
 protected:
 	DECLARE_MESSAGE_MAP()
 

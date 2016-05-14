@@ -11,6 +11,7 @@
 #define new DEBUG_NEW
 #endif
 
+using namespace std;
 
 static int buttons[10] = { IDC_RADIO_A, IDC_RADIO_B, IDC_RADIO_C,
 IDC_RADIO_D, IDC_RADIO_E, IDC_RADIO_F, IDC_RADIO_G, IDC_RADIO_H, IDC_RADIO_I, IDC_RADIO_J };
@@ -51,9 +52,10 @@ END_MESSAGE_MAP()
 // CPsycologyTestDlg dialog
 
 
-CPsycologyTestDlg::CPsycologyTestDlg(CWnd* pParent /*=NULL*/)
+CPsycologyTestDlg::CPsycologyTestDlg(shared_ptr<PsiScale> scale, 
+	CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_PSYCOLOGYTEST_DIALOG, pParent),
-	_psi_scale(nullptr),
+	_psi_scale(scale),
 	_current_question_index(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -186,11 +188,7 @@ HCURSOR CPsycologyTestDlg::OnQueryDragIcon()
 
 void CPsycologyTestDlg::OnBnClickedStart()
 {
-	_psi_scale = _test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate1.xml"));
-	// _test_manager.AddScale(_test_manager.LoadPsiScale(_T("..\\PsycologyTest\\TestTemplate.xml")));
-	// _psi_scale = &_test_manager.GetPsiScale(1);
-
-	//_test_manager = shared_ptr<CAnswerManager>(new CAnswerManager(_psi_scale));
+	ASSERT(_psi_scale);
 
 	ShowQuestion(0);
 

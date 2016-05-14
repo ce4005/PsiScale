@@ -21,6 +21,20 @@ CGroupList::~CGroupList()
 }
 
 
+bool CGroupList::SelectString(const CString& text)
+{
+	for (int i = 0; i < GetCount(); ++i)
+	{
+		if (GetItemText(i) == text)
+		{
+			SelectItem(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CGroupList::OnSelectionChanged()
 {
 }
@@ -32,7 +46,6 @@ BOOL CGroupList::OnBeforeRemoveItem(int)
 
 void CGroupList::OnAfterAddItem(int)
 {
-	AfxMessageBox(_T("Test"));
 }
 
 void CGroupList::OnAfterRenameItem(int)

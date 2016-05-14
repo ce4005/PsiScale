@@ -95,6 +95,7 @@ BEGIN_MESSAGE_MAP(CPsiScaleEditorDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_WORKING_FOLDER, &CPsiScaleEditorDlg::OnEnChangeEditWorkingFolder)
 	ON_CBN_SELCHANGE(IDC_COMBO_SCALES, &CPsiScaleEditorDlg::OnCbnSelchangeComboScales)
 	ON_BN_CLICKED(IDC_EDIT_QUESTIONS, &CPsiScaleEditorDlg::OnBnClickedEditQuestions)
+	ON_BN_CLICKED(IDCANCEL, &CPsiScaleEditorDlg::OnBnClickedExit)
 END_MESSAGE_MAP()
 
 
@@ -286,7 +287,7 @@ void CPsiScaleEditorDlg::UpdateScale()
 	{
 		auto& choices = _scale->Choices();
 		choices.resize(_choice_list.GetCount());
-		for (unsigned int i = 0; i < _choice_list.GetCount(); ++i)
+		for (int i = 0; i < _choice_list.GetCount(); ++i)
 		{
 			choices[i].id = i + 1;
 			choices[i].text = _choice_list.GetItemText(i);
@@ -295,10 +296,9 @@ void CPsiScaleEditorDlg::UpdateScale()
 
 	auto& groups = _scale->Groups();
 	groups.resize(_group_list.GetCount());
-	for (unsigned int i = 0; i < _group_list.GetCount(); ++i)
+	for (int i = 0; i < _group_list.GetCount(); ++i)
 	{
-		groups[i].description = _group_list.GetItemText(i);
-		groups[i].id = i + 1;
+		groups[i] = _group_list.GetItemText(i);
 	}
 }
 
@@ -322,7 +322,7 @@ void CPsiScaleEditorDlg::UpdateUi()
 	for (unsigned int i = 0; i < _scale->GetGroupCount(); ++i)
 	{
 		auto group = _scale->GetGroup(i);
-		_group_list.AddItem(group.description, group.id);
+		_group_list.AddItem(group);
 	}
 
 	for (auto choice : _scale->Choices())
@@ -356,8 +356,7 @@ void CPsiScaleEditorDlg::OnQuestionChange()
 				_choice_list.AddItem(choice.text, choice.id);
 			}
 		}
-
-		_group_list.SelectItem(question.GetGroupId() - 1);
+		_group_list.SelectString(question.GetGroup());
 	}
 
 	UpdateData(FALSE);
@@ -379,85 +378,6 @@ void CPsiScaleEditorDlg::ClearLists()
 	}
 }
 
-// void CPsiScaleEditorDlg::OnBnClickedButtonAddGroup()
-// {
-// 	CInputStringDialog dlg(_T("新增分组"), _T("输入分组的名称"));
-// 	if (dlg.DoModal() == IDOK)
-// 	{
-// 		PsiScaleGroup group;
-// 		group.description = dlg.GetText();
-// 		if (!_scale)
-// 		{
-// 			_scale = shared_ptr<PsiScale>(new PsiScale);
-// 		}
-// 		group.id = _scale->GetGroupCount();
-// 		_scale->AddGroup(group);
-// 
-// 		_group_list.AddString(group.description);
-// 	}
-// 
-// 	UpdateUi();
-// }
-
-
-// void CPsiScaleEditorDlg::OnBnClickedButtonAddChoice()
-// {
-// 	UpdateData();
-// 
-// 	CInputStringDialog dlg(_T("增加题目的选项"), _T("输入选项的内容："));
-// 
-// 	if (dlg.DoModal() == IDOK)
-// 	{
-// 		if (!_scale)
-// 		{
-// 			_scale = shared_ptr<PsiScale>(new PsiScale);
-// 		}
-// 
-// 		if (_use_same_choices)
-// 		{
-// 			QuestionChoice choice;
-// 			choice.id = _scale->Choices().size() + 1;
-// 			choice.text = dlg.GetText();
-// 
-// 			_scale->Choices().push_back(choice);
-// 		}
-// 		else
-// 		{
-// 			QuestionChoice choice;
-// 			auto& question = _scale->Question(_current_question);
-// 			choice.id = question.Choices().size() + 1;
-// 			choice.text = dlg.GetText();
-// 
-// 			question.Choices().push_back(choice);
-// 		}
-// 		_choice_list.AddString(dlg.GetText());
-// 	}
-// }
-// 
-// 
-// void CPsiScaleEditorDlg::OnEnChangeEditQuestion()
-// {
-// 	ASSERT(_scale);
-// 	ASSERT(_current_question < int(_scale->GetQuestionCount()) && _current_question >= 0);
-// 	// TODO:  If this is a RICHEDIT control, the control will not
-// 	// send this notification unless you override the CDialogEx::OnInitDialog()
-// 	// function and call CRichEditCtrl().SetEventMask()
-// 	// with the ENM_CHANGE flag ORed into the mask.
-// 
-// 	// TODO:  Add your control notification handler code here
-// 	UpdateData();
-// 
-// 	_scale->Question(_current_question).SetText(_question_text);
-// 
-// 	CString new_text;
-// 	new_text.Format(_T("%d. %s"), _current_question + 1,
-// 		(_question_text.GetLength() > 10) ? (_question_text.Left(10) + _T("...")) : _question_text);
-// 
-// 	_question_list.InsertString(_current_question, new_text);
-// 	_question_list.DeleteString(_current_question + 1);
-// }
-// 
-// 
 void CPsiScaleEditorDlg::OnLbnSelchangeListQuestions()
 {
 	if (_question_list.GetSelItem() == LB_ERR)
@@ -575,4 +495,13 @@ void CPsiScaleEditorDlg::OnBnClickedEditQuestions()
 	{
 		UpdateUi();
 	}
+}
+
+void CPsiScaleEditorDlg::OnBnClickedExit()
+{
+	if (AfxMessageBox(_T("是否保存所做修改？"), MB_OKCANCEL) == IDOK)
+	{
+		OnBnClickedButtonSave();
+	}
+	CDialogEx::OnCancel();
 }

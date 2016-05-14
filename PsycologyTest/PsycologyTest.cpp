@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "PsycologyTest.h"
-#include "PsycologyTestDlg.h"
+#include "TestOverviewDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -60,7 +60,7 @@ BOOL CPsycologyTestApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-	CPsycologyTestDlg dlg;
+	CTestOverviewDialog dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

@@ -14,7 +14,7 @@ class CPsycologyTestDlg : public CDialogEx
 {
 // Construction
 public:
-	CPsycologyTestDlg(CWnd* pParent = NULL);	// standard constructor
+	CPsycologyTestDlg(std::shared_ptr<PsiScale> scale, CWnd* pParent = NULL);	// standard constructor
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

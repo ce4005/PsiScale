@@ -9,8 +9,6 @@
 </Choices>
 
 <Groups>
-<Item Id = "1" Description = "Group1"/>
-<Item Id = "2" Description = "Group2"/>
 </Groups>
 
 <Questions>

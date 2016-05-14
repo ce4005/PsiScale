@@ -33,9 +33,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputStringDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="QuestionEditorDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>

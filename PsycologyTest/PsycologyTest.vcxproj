@@ -190,19 +190,23 @@
     <ClInclude Include="PsycologyTest.h" />
     <ClInclude Include="PsycologyTestDlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ScaleList.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TestOverviewDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnswerManager.cpp" />
     <ClCompile Include="PsycologyTest.cpp" />
     <ClCompile Include="PsycologyTestDlg.cpp" />
+    <ClCompile Include="ScaleList.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TestOverviewDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PsycologyTest.rc" />

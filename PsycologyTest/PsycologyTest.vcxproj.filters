@@ -36,6 +36,12 @@
     <ClInclude Include="AnswerManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestOverviewDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScaleList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PsycologyTest.cpp">
@@ -48,6 +54,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AnswerManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestOverviewDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScaleList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

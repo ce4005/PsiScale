@@ -184,7 +184,6 @@
   <ItemGroup>
     <ClInclude Include="ChoiceList.h" />
     <ClInclude Include="GroupList.h" />
-    <ClInclude Include="InputStringDialog.h" />
     <ClInclude Include="PsiScaleEditor.h" />
     <ClInclude Include="PsiScaleEditorDlg.h" />
     <ClInclude Include="QuestionEditorDlg.h" />
